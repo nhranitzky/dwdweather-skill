@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CLI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../scripts" && pwd)"
+
+unset VIRTUAL_ENV CONDA_PREFIX CONDA_DEFAULT_ENV
+exec uv run --project "$CLI_DIR" --directory "$CLI_DIR" dwdweather "$@"
