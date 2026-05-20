@@ -11,6 +11,7 @@ from dwdweather.errors import DwdWeatherError
 from dwdweather.render import (
     console,
     echo_json,
+    echo_toon,
     fmt_humidity,
     fmt_precip,
     fmt_pressure,
@@ -41,14 +42,16 @@ def current(
         source = (data.get("sources") or [{}])[0]
         if not weather:
             raise DwdWeatherError("NO_DATA", "No current weather data available for this location.", 4)
-        if output == OutputFormat.json:
-            echo_json(
-                {
-                    "meta": meta("current", "current", timezone),
-                    "location": place,
-                    "data": {"weather": weather, "source": source},
-                }
-            )
+        if output in (OutputFormat.json, OutputFormat.toon):
+            payload = {
+                "meta": meta("current", "current", timezone),
+                "location": place,
+                "data": {"weather": weather, "source": source},
+            }
+            if output == OutputFormat.toon:
+                echo_toon(payload)
+            else:
+                echo_json(payload)
             return
         _render_text(place["short_name"], weather, source)
     except DwdWeatherError as exc:

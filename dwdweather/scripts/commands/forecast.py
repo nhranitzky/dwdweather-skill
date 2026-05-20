@@ -12,6 +12,7 @@ from dwdweather.render import (
     add_hourly_row,
     console,
     echo_json,
+    echo_toon,
     fmt_precip,
     fmt_sunshine,
     fmt_temp,
@@ -52,14 +53,16 @@ def forecast(
         source = ((data or {}).get("sources") or [{}])[0]
         mode = "daily" if daily else "hourly"
         payload_records = aggregate_daily(records) if daily else records
-        if output == OutputFormat.json:
-            echo_json(
-                {
-                    "meta": meta("forecast", mode, timezone),
-                    "location": place,
-                    "data": {"source": source, "records": payload_records},
-                }
-            )
+        if output in (OutputFormat.json, OutputFormat.toon):
+            payload = {
+                "meta": meta("forecast", mode, timezone),
+                "location": place,
+                "data": {"source": source, "records": payload_records},
+            }
+            if output == OutputFormat.toon:
+                echo_toon(payload)
+            else:
+                echo_json(payload)
             return
         if daily:
             _render_daily(place["short_name"], payload_records, source)

@@ -12,6 +12,7 @@ from dwdweather.render import (
     add_hourly_row,
     console,
     echo_json,
+    echo_toon,
     fmt_humidity,
     fmt_precip,
     fmt_sunshine,
@@ -71,18 +72,20 @@ def history(
         mode = "daily" if daily else "hourly"
         payload_records = aggregate_daily(records) if daily else records
         period = date_value if not end_date else f"{date_value} to {end_date}"
-        if output == OutputFormat.json:
-            echo_json(
-                {
-                    "meta": meta("history", mode, timezone),
-                    "location": place,
-                    "data": {
-                        "period": period,
-                        "sources": sources,
-                        "records": payload_records,
-                    },
-                }
-            )
+        if output in (OutputFormat.json, OutputFormat.toon):
+            payload = {
+                "meta": meta("history", mode, timezone),
+                "location": place,
+                "data": {
+                    "period": period,
+                    "sources": sources,
+                    "records": payload_records,
+                },
+            }
+            if output == OutputFormat.toon:
+                echo_toon(payload)
+            else:
+                echo_json(payload)
             return
         if daily:
             _render_daily(place["short_name"], period, payload_records, sources)

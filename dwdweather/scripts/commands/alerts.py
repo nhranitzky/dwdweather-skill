@@ -7,7 +7,7 @@ from rich.text import Text
 
 from dwdweather.api import brightsky_get
 from dwdweather.errors import DwdWeatherError
-from dwdweather.render import console, echo_json, fmt_timestamp
+from dwdweather.render import console, echo_json, echo_toon, fmt_timestamp
 
 from .common import LocationArgument, OutputFormat, OutputOption, handle_error, meta, resolve_location
 
@@ -45,18 +45,20 @@ def alerts(
         location_info = (data or {}).get("location") or {}
         municipality = location_info.get("name") or place["short_name"]
         warn_cell = location_info.get("warn_cell_id") or ""
-        if output == OutputFormat.json:
-            echo_json(
-                {
-                    "meta": meta("alerts", "alerts"),
-                    "location": place,
-                    "data": {
-                        "municipality": municipality,
-                        "warn_cell_id": warn_cell,
-                        "alerts": alert_list,
-                    },
-                }
-            )
+        if output in (OutputFormat.json, OutputFormat.toon):
+            payload = {
+                "meta": meta("alerts", "alerts"),
+                "location": place,
+                "data": {
+                    "municipality": municipality,
+                    "warn_cell_id": warn_cell,
+                    "alerts": alert_list,
+                },
+            }
+            if output == OutputFormat.toon:
+                echo_toon(payload)
+            else:
+                echo_json(payload)
             return
         _render_text(municipality, warn_cell, alert_list)
     except DwdWeatherError as exc:

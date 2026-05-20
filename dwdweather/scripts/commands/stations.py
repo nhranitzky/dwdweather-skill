@@ -7,7 +7,7 @@ from rich.table import Table
 
 from dwdweather.api import brightsky_get
 from dwdweather.errors import DwdWeatherError
-from dwdweather.render import console, echo_json, fmt_timestamp
+from dwdweather.render import console, echo_json, echo_toon, fmt_timestamp
 
 from .common import LocationArgument, OutputFormat, OutputOption, handle_error, meta, resolve_location
 
@@ -25,18 +25,20 @@ def stations(
         sources = sorted((data or {}).get("sources", []), key=lambda item: item.get("distance") or 0)[:limit]
         if not sources:
             raise DwdWeatherError("NO_DATA", f"No DWD stations found within {radius} km of {place['short_name']}.", 4)
-        if output == OutputFormat.json:
-            echo_json(
-                {
-                    "meta": meta("stations", "stations"),
-                    "location": place,
-                    "data": {
-                        "radius_km": radius,
-                        "limit": limit,
-                        "stations": sources,
-                    },
-                }
-            )
+        if output in (OutputFormat.json, OutputFormat.toon):
+            payload = {
+                "meta": meta("stations", "stations"),
+                "location": place,
+                "data": {
+                    "radius_km": radius,
+                    "limit": limit,
+                    "stations": sources,
+                },
+            }
+            if output == OutputFormat.toon:
+                echo_toon(payload)
+            else:
+                echo_json(payload)
             return
         _render_text(place["short_name"], radius, sources)
     except DwdWeatherError as exc:

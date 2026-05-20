@@ -13,6 +13,7 @@ from dwdweather.errors import DwdWeatherError
 from dwdweather.render import (
     console,
     echo_json,
+    echo_toon,
     fmt_humidity,
     fmt_precip,
     fmt_pressure,
@@ -65,19 +66,21 @@ def summary(
         alert_data = brightsky_get("/alerts", {"lat": place["lat"], "lon": place["lon"]}, optional=True)
         alert_list = sort_alerts((alert_data or {}).get("alerts", [])) if alert_data else []
 
-        if output == OutputFormat.json:
-            echo_json(
-                {
-                    "meta": meta("summary", "summary", timezone),
-                    "location": place,
-                    "data": {
-                        "current": current_weather,
-                        "current_source": current_source,
-                        "forecast": forecast_rows,
-                        "alerts": alert_list,
-                    },
-                }
-            )
+        if output in (OutputFormat.json, OutputFormat.toon):
+            payload = {
+                "meta": meta("summary", "summary", timezone),
+                "location": place,
+                "data": {
+                    "current": current_weather,
+                    "current_source": current_source,
+                    "forecast": forecast_rows,
+                    "alerts": alert_list,
+                },
+            }
+            if output == OutputFormat.toon:
+                echo_toon(payload)
+            else:
+                echo_json(payload)
             return
         _render_text(place["short_name"], current_weather, current_source, forecast_rows, alert_list, days)
     except DwdWeatherError as exc:

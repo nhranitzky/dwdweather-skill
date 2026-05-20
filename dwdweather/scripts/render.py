@@ -8,12 +8,18 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
+from . import toon as _toon
+
 console = Console()
 error_console = Console(stderr=True)
 
 
 def echo_json(payload: dict[str, Any]) -> None:
     typer.echo(json.dumps(payload, ensure_ascii=False, indent=2))
+
+
+def echo_toon(payload: dict[str, Any]) -> None:
+    typer.echo("```toon\n" + _toon.dumps(payload) + "```")
 
 
 def generated_at() -> str:

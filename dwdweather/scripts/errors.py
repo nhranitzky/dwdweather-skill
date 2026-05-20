@@ -7,6 +7,7 @@ from typing import NoReturn
 
 import typer
 
+from . import toon as _toon
 from .render import error_console
 
 
@@ -35,6 +36,12 @@ def json_error_payload(error: DwdWeatherError) -> str:
 def raise_for_error(error: DwdWeatherError, *, output: str, debug: bool) -> NoReturn:
     if output == "json":
         typer.echo(json_error_payload(error))
+        if debug:
+            if error.details:
+                error_console.print(f"[dim]{error.details}[/]")
+            traceback.print_exception(error)
+    elif output == "toon":
+        typer.echo("```toon\n" + _toon.dumps({"error": {"code": error.code, "message": error.message, "exit_code": error.exit_code}}) + "```")
         if debug:
             if error.details:
                 error_console.print(f"[dim]{error.details}[/]")
