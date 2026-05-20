@@ -25,7 +25,7 @@ def stations(
         sources = sorted((data or {}).get("sources", []), key=lambda item: item.get("distance") or 0)[:limit]
         if not sources:
             raise DwdWeatherError("NO_DATA", f"No DWD stations found within {radius} km of {place['short_name']}.", 4)
-        if output in (OutputFormat.json, OutputFormat.toon):
+        if output in (OutputFormat.json, OutputFormat.llm):
             payload = {
                 "meta": meta("stations", "stations"),
                 "location": place,
@@ -35,7 +35,7 @@ def stations(
                     "stations": sources,
                 },
             }
-            if output == OutputFormat.toon:
+            if output == OutputFormat.llm:
                 echo_toon(payload)
             else:
                 echo_json(payload)

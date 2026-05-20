@@ -23,22 +23,22 @@ ${HERMES_SKILL_DIR}/bin/dwdweather
 
 The CLI uses BrightSky data derived from Deutscher Wetterdienst data. It requires internet access but no API key, credentials, or required environment variables.
 
-**Output format:** All CLI calls use `--output toon`. The CLI emits TOON v3.0 format — the same structure as JSON but typically 20–60% smaller, wrapped in a ` ```toon ` code fence. Errors are also emitted as TOON when this format is selected.
+**Output format:** All CLI calls use `--output llm`. The CLI emits TOON v3.0 format — the same structure as JSON but typically 20–60% smaller, wrapped in a ` ```toon ` code fence. Errors are also emitted as TOON when this format is selected.
 
 ## Default Workflow
 
 For broad weather questions such as "Wie wird das Wetter in Berlin?" or "weather in Hamburg", call:
 
 ```bash
-${HERMES_SKILL_DIR}/bin/dwdweather summary Berlin --output toon
+${HERMES_SKILL_DIR}/bin/dwdweather summary Berlin --output llm
 ```
 
-Default to `--output toon` for all CLI calls. Parse the TOON content and answer the user in concise natural language. Only show raw output when the user explicitly asks for structured data, debugging details, or machine-readable output.
+Default to `--output llm` for all CLI calls. Parse the TOON content and answer the user in concise natural language. Only show raw output when the user explicitly asks for structured data, debugging details, or machine-readable output.
 
 Use the CLI default timezone, `Europe/Berlin`, unless the user asks for another IANA timezone. In that case pass `--tz`, for example:
 
 ```bash
-${HERMES_SKILL_DIR}/bin/dwdweather forecast Berlin --days 2 --tz UTC --output toon
+${HERMES_SKILL_DIR}/bin/dwdweather forecast Berlin --days 2 --tz UTC --output llm
 ```
 
 `DWDWEATHER_TZ` can optionally set the default timezone outside the skill, but it is not required.
@@ -48,39 +48,39 @@ ${HERMES_SKILL_DIR}/bin/dwdweather forecast Berlin --days 2 --tz UTC --output to
 Use `summary` for general weather requests. It returns current conditions, a daily outlook, and active alerts when available:
 
 ```bash
-${HERMES_SKILL_DIR}/bin/dwdweather summary LOCATION --days 5 --output toon
+${HERMES_SKILL_DIR}/bin/dwdweather summary LOCATION --days 5 --output llm
 ```
 
 Use `current` for current observed conditions:
 
 ```bash
-${HERMES_SKILL_DIR}/bin/dwdweather current LOCATION --output toon
+${HERMES_SKILL_DIR}/bin/dwdweather current LOCATION --output llm
 ```
 
 Use `forecast` for forecasts. `--days` must be from `1` to `10`; the default is `3`. Add `--daily` when the user wants daily aggregates instead of hourly records:
 
 ```bash
-${HERMES_SKILL_DIR}/bin/dwdweather forecast LOCATION --days 3 --output toon
-${HERMES_SKILL_DIR}/bin/dwdweather forecast LOCATION --days 7 --daily --output toon
+${HERMES_SKILL_DIR}/bin/dwdweather forecast LOCATION --days 3 --output llm
+${HERMES_SKILL_DIR}/bin/dwdweather forecast LOCATION --days 7 --daily --output llm
 ```
 
 Use `history` for past observations. `--date YYYY-MM-DD` is required. `--end-date YYYY-MM-DD` is optional and inclusive. Date ranges must not exceed 366 days. Add `--daily` for daily aggregates:
 
 ```bash
-${HERMES_SKILL_DIR}/bin/dwdweather history LOCATION --date 2026-05-01 --output toon
-${HERMES_SKILL_DIR}/bin/dwdweather history LOCATION --date 2026-05-01 --end-date 2026-05-07 --daily --output toon
+${HERMES_SKILL_DIR}/bin/dwdweather history LOCATION --date 2026-05-01 --output llm
+${HERMES_SKILL_DIR}/bin/dwdweather history LOCATION --date 2026-05-01 --end-date 2026-05-07 --daily --output llm
 ```
 
 Use `alerts` for active DWD weather warnings:
 
 ```bash
-${HERMES_SKILL_DIR}/bin/dwdweather alerts LOCATION --output toon
+${HERMES_SKILL_DIR}/bin/dwdweather alerts LOCATION --output llm
 ```
 
 Use `stations` to find nearby DWD observation stations. `--radius` must be from `1` to `1000` km; the default is `50`. `--limit` must be from `1` to `100`; the default is `15`:
 
 ```bash
-${HERMES_SKILL_DIR}/bin/dwdweather stations LOCATION --radius 50 --limit 15 --output toon
+${HERMES_SKILL_DIR}/bin/dwdweather stations LOCATION --radius 50 --limit 15 --output llm
 ```
 
 ## Locations
@@ -88,16 +88,16 @@ ${HERMES_SKILL_DIR}/bin/dwdweather stations LOCATION --radius 50 --limit 15 --ou
 Pass the user's German location name directly to the CLI. Multi-word locations may be passed as separate arguments or quoted as one argument:
 
 ```bash
-${HERMES_SKILL_DIR}/bin/dwdweather summary Freiburg im Breisgau --output toon
-${HERMES_SKILL_DIR}/bin/dwdweather summary "Freiburg im Breisgau" --output toon
+${HERMES_SKILL_DIR}/bin/dwdweather summary Freiburg im Breisgau --output llm
+${HERMES_SKILL_DIR}/bin/dwdweather summary "Freiburg im Breisgau" --output llm
 ```
 
 Do not use this skill for locations outside Germany. If the user asks for a non-German location, explain that this skill is Germany-only because DWD warnings and BrightSky/DWD geocoding are Germany-focused.
 
 ## Answering Rules
 
-- Convert JSON results into a concise natural-language answer.
-- Report only values present in the JSON. Do not invent missing weather values.
+- Convert TOON results into a concise natural-language answer.
+- Report only values present in the TOON. Do not invent missing weather values.
 - Include active warnings when present, especially severe or extreme alerts.
 - Mention the observation time and station/source when it is relevant to current or historical data.
 - For forecasts, summarize the requested period instead of listing every hourly record unless the user asks for detail.

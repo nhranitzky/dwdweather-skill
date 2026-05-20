@@ -66,7 +66,7 @@ def summary(
         alert_data = brightsky_get("/alerts", {"lat": place["lat"], "lon": place["lon"]}, optional=True)
         alert_list = sort_alerts((alert_data or {}).get("alerts", [])) if alert_data else []
 
-        if output in (OutputFormat.json, OutputFormat.toon):
+        if output in (OutputFormat.json, OutputFormat.llm):
             payload = {
                 "meta": meta("summary", "summary", timezone),
                 "location": place,
@@ -77,7 +77,7 @@ def summary(
                     "alerts": alert_list,
                 },
             }
-            if output == OutputFormat.toon:
+            if output == OutputFormat.llm:
                 echo_toon(payload)
             else:
                 echo_json(payload)

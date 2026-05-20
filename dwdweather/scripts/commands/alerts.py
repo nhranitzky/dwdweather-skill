@@ -45,7 +45,7 @@ def alerts(
         location_info = (data or {}).get("location") or {}
         municipality = location_info.get("name") or place["short_name"]
         warn_cell = location_info.get("warn_cell_id") or ""
-        if output in (OutputFormat.json, OutputFormat.toon):
+        if output in (OutputFormat.json, OutputFormat.llm):
             payload = {
                 "meta": meta("alerts", "alerts"),
                 "location": place,
@@ -55,7 +55,7 @@ def alerts(
                     "alerts": alert_list,
                 },
             }
-            if output == OutputFormat.toon:
+            if output == OutputFormat.llm:
                 echo_toon(payload)
             else:
                 echo_json(payload)

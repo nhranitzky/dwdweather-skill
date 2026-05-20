@@ -16,7 +16,7 @@ from dwdweather.render import generated_at
 class OutputFormat(StrEnum):
     text = "text"
     json = "json"
-    toon = "toon"
+    llm = "llm"
 
 
 LocationArgument = Annotated[

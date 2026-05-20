@@ -9,12 +9,12 @@ It provides current weather, forecasts, historical observations, DWD alerts, nea
 ## Command Overview
 
 ```text
-dwdweather current   LOCATION... [--tz TZ] [--output text|json|toon]
-dwdweather forecast  LOCATION... [--days N] [--daily] [--tz TZ] [--output text|json|toon]
-dwdweather history   LOCATION... --date YYYY-MM-DD [--end-date YYYY-MM-DD] [--daily] [--tz TZ] [--output text|json|toon]
-dwdweather alerts    LOCATION... [--output text|json|toon]
-dwdweather stations  LOCATION... [--radius KM] [--limit N] [--output text|json|toon]
-dwdweather summary   LOCATION... [--days N] [--tz TZ] [--output text|json|toon]
+dwdweather current   LOCATION... [--tz TZ] [--output text|json|llm]
+dwdweather forecast  LOCATION... [--days N] [--daily] [--tz TZ] [--output text|json|llm]
+dwdweather history   LOCATION... --date YYYY-MM-DD [--end-date YYYY-MM-DD] [--daily] [--tz TZ] [--output text|json|llm]
+dwdweather alerts    LOCATION... [--output text|json|llm]
+dwdweather stations  LOCATION... [--radius KM] [--limit N] [--output text|json|llm]
+dwdweather summary   LOCATION... [--days N] [--tz TZ] [--output text|json|llm]
 ```
 
 All commands require a German location name. Multi-word locations may be passed unquoted.
@@ -26,7 +26,7 @@ All commands require a German location name. Multi-word locations may be passed 
 
 ## Common Options
 
-- `--output text|json|toon`: output format, default `text`
+- `--output text|json|llm`: output format, default `text`; `llm` emits TOON v3.0 wrapped in a ` ```toon ` code fence
 - `--tz TIMEZONE`: timezone for weather timestamps, default `Europe/Berlin`
 
 `DWDWEATHER_TZ` can set the default timezone when `--tz` is not passed.
@@ -69,7 +69,7 @@ Handled JSON errors are printed to stdout:
 }
 ```
 
-`--output toon` emits the same structure in TOON v3.0 format, which is typically 20–60% smaller depending on data shape. Errors are also emitted as TOON when this format is selected. The output is wrapped in a ` ```toon ` / ` ``` ` code fence for direct embedding in Markdown.
+`--output llm` emits the same structure in TOON v3.0 format, which is typically 20–60% smaller depending on data shape. Errors are also emitted as TOON when this format is selected. The output is wrapped in a ` ```toon ` / ` ``` ` code fence for direct embedding in Markdown.
 
 Successful TOON output:
 

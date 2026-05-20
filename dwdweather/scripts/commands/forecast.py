@@ -53,13 +53,13 @@ def forecast(
         source = ((data or {}).get("sources") or [{}])[0]
         mode = "daily" if daily else "hourly"
         payload_records = aggregate_daily(records) if daily else records
-        if output in (OutputFormat.json, OutputFormat.toon):
+        if output in (OutputFormat.json, OutputFormat.llm):
             payload = {
                 "meta": meta("forecast", mode, timezone),
                 "location": place,
                 "data": {"source": source, "records": payload_records},
             }
-            if output == OutputFormat.toon:
+            if output == OutputFormat.llm:
                 echo_toon(payload)
             else:
                 echo_json(payload)

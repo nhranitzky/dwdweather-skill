@@ -72,7 +72,7 @@ def history(
         mode = "daily" if daily else "hourly"
         payload_records = aggregate_daily(records) if daily else records
         period = date_value if not end_date else f"{date_value} to {end_date}"
-        if output in (OutputFormat.json, OutputFormat.toon):
+        if output in (OutputFormat.json, OutputFormat.llm):
             payload = {
                 "meta": meta("history", mode, timezone),
                 "location": place,
@@ -82,7 +82,7 @@ def history(
                     "records": payload_records,
                 },
             }
-            if output == OutputFormat.toon:
+            if output == OutputFormat.llm:
                 echo_toon(payload)
             else:
                 echo_json(payload)

@@ -42,13 +42,13 @@ def current(
         source = (data.get("sources") or [{}])[0]
         if not weather:
             raise DwdWeatherError("NO_DATA", "No current weather data available for this location.", 4)
-        if output in (OutputFormat.json, OutputFormat.toon):
+        if output in (OutputFormat.json, OutputFormat.llm):
             payload = {
                 "meta": meta("current", "current", timezone),
                 "location": place,
                 "data": {"weather": weather, "source": source},
             }
-            if output == OutputFormat.toon:
+            if output == OutputFormat.llm:
                 echo_toon(payload)
             else:
                 echo_json(payload)
